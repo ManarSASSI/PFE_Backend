@@ -37,7 +37,7 @@ public class ContratController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+//    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<Contrat> createContrat(@RequestBody Contrat contrat) {
         if (contrat.getPartnerId() == null) {
             throw new IllegalArgumentException("partnerId est requis");
@@ -60,7 +60,7 @@ public class ContratController {
 
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+//    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<Contrat> updateContrat(@PathVariable Long id,
                                                  @RequestBody Contrat contratDetails) {
         Contrat existingContrat = contratService.findById(id);
@@ -93,7 +93,7 @@ public class ContratController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteContrat(@PathVariable Long id) {
         Contrat contrat = contratService.findById(id);
         if (contrat == null) {

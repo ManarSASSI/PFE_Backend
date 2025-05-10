@@ -26,9 +26,10 @@ public class Contrat {
     @JoinColumn(name = "partner_id", updatable = false)
     private User partner;
 
-//    @Transient
-//    @JoinColumn(name = "partner_id",updatable = false)
+////    @Column
+//    @Column(name = "partner_id",updatable = false)
 //    private Long partnerId;
+//
 
     @Column(nullable = false, name = "date_debut")
     private LocalDate dateDebut;
