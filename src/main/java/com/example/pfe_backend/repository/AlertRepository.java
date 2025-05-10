@@ -12,4 +12,5 @@ public interface AlertRepository extends JpaRepository<Alert, Long> {
     List<Alert> findByRecipientAndIsReadFalse(User user);
     List<Alert> findByContrat(Contrat contrat);
     List<Alert> findByRecipientIdOrderByAlertDateDesc(Long userId);
+    List<Alert> findByContratId(Long contratId);
 }

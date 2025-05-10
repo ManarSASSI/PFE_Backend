@@ -26,4 +26,6 @@ public interface ContratRepository extends JpaRepository<Contrat, Long> {
             @Param("endDate") LocalDate endDate);
 
     List<Contrat> findByDateFin(LocalDate dateFin);
+
+//
 }

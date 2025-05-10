@@ -1,6 +1,8 @@
 package com.example.pfe_backend.model;
 
 import com.example.pfe_backend.model.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.*;
@@ -26,10 +28,10 @@ public class Contrat {
     @JoinColumn(name = "partner_id", updatable = false)
     private User partner;
 
-////    @Column
-//    @Column(name = "partner_id",updatable = false)
-//    private Long partnerId;
-//
+    @Transient
+    @JsonProperty("partnerId")
+    private Long partnerId;
+
 
     @Column(nullable = false, name = "date_debut")
     private LocalDate dateDebut;
@@ -58,6 +60,7 @@ public class Contrat {
     @OneToMany(mappedBy = "contrat", cascade = CascadeType.ALL)
     private List<Document> documents = new ArrayList<>();
 
+
     private Double penaliteParJour;
     private Integer joursRetard;
     private Double montantPenalite;
@@ -73,7 +76,7 @@ public class Contrat {
         this.objetContrat = objetContrat;
         this.montant = montant;
         this.partner = partner;
-//        this.partnerId = partnerId;
+        this.partnerId = partnerId;
         this.dateDebut = dateDebut;
         this.dateFin = dateFin;
         this.status = status;
@@ -84,6 +87,11 @@ public class Contrat {
         this.etatExecution = etatExecution;
         this.suivis = suivis;
         this.documents = documents;
+    }
+
+    @JsonProperty("partnerUsername")
+    public String getPartnerUsername() {
+        return (partner != null) ? partner.getUsername() : null;
     }
 
     public EtatExecution getEtatExecution() {
@@ -152,16 +160,12 @@ public class Contrat {
 
 
     public Long getPartnerId() {
-        return partner != null ? partner.getId() : null;
+        return partnerId;
     }
 
-//    public Long getPartnerId() {
-//        return partnerId;
-//    }
-//
-//    public void setPartnerId(Long partnerId) {
-//        this.partnerId = partnerId;
-//    }
+    public void setPartnerId(Long partnerId) {
+        this.partnerId = partnerId;
+    }
 
     public LocalDate getDateDebut() {
         return dateDebut;

@@ -1,7 +1,9 @@
 package com.example.pfe_backend.service;
 
+import com.example.pfe_backend.model.Alert;
 import com.example.pfe_backend.model.Contrat;
 import com.example.pfe_backend.model.User;
+import com.example.pfe_backend.repository.AlertRepository;
 import com.example.pfe_backend.repository.ContratRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,8 +15,12 @@ public class ContratService {
     @Autowired
     private ContratRepository contratRepository;
 
-    public ContratService(ContratRepository contratRepository) {
+    @Autowired
+    private AlertRepository alertRepository;
+
+    public ContratService(ContratRepository contratRepository, AlertRepository alertRepository) {
         this.contratRepository = contratRepository;
+        this.alertRepository = alertRepository;
     }
 
     public List<Contrat> findAll() {
@@ -30,6 +36,10 @@ public class ContratService {
     }
 
     public void delete(Long id) {
+
+        List<Alert> alerts = alertRepository.findByContratId(id);
+        alertRepository.deleteAll(alerts);
+
         contratRepository.deleteById(id);
     }
 
