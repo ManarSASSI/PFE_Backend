@@ -57,6 +57,11 @@ public class Contrat {
     @OneToMany(mappedBy = "contrat", cascade = CascadeType.ALL)
     private List<Document> documents = new ArrayList<>();
 
+    private Double penaliteParJour;
+    private Integer joursRetard;
+    private Double montantPenalite;
+    private Boolean alerteExpirationEnvoyee = false;
+
 
     public Contrat() {
     }
@@ -234,11 +239,42 @@ public class Contrat {
         }
     }
 
+    public Double getPenaliteParJour() {
+        return penaliteParJour;
+    }
+
+    public void setPenaliteParJour(Double penaliteParJour) {
+        this.penaliteParJour = penaliteParJour;
+    }
+
+    public Integer getJoursRetard() {
+        return joursRetard;
+    }
+
+    public void setJoursRetard(Integer joursRetard) {
+        this.joursRetard = joursRetard;
+    }
+
+    public Double getMontantPenalite() {
+        return montantPenalite;
+    }
+
+    public void setMontantPenalite(Double montantPenalite) {
+        this.montantPenalite = montantPenalite;
+    }
+
+    public Boolean getAlerteExpirationEnvoyee() {
+        return alerteExpirationEnvoyee;
+    }
+
+    public void setAlerteExpirationEnvoyee(Boolean alerteExpirationEnvoyee) {
+        this.alerteExpirationEnvoyee = alerteExpirationEnvoyee;
+    }
+
     public enum TypeContrat {
         SERVICE,
-        MAINTENANCE,
-        FOURNITURE,
-        CONSULTATION
+        TRAVAUX,
+        CONTINU,
     }
 
     public enum StatusContrat {

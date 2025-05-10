@@ -57,8 +57,8 @@ public class PartnerController {
         return ResponseEntity.ok(partnerService.countPartners());
     }
 
+
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<Void> deletePartner(@PathVariable Long id) {
         partnerService.deletePartner(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

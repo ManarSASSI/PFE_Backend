@@ -46,8 +46,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/register").permitAll()
                         .requestMatchers("/api/auth/forgot-password").permitAll()
                         .requestMatchers("/api/auth/reset-password").permitAll()
-                                .requestMatchers(HttpMethod.DELETE, "/api/partners/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")                        .requestMatchers("/api/partners/**").permitAll()
-//                        .hasAnyRole("ADMIN", "MANAGER")
+                        .requestMatchers("/api/partners/**").permitAll()
+                        .requestMatchers("/api/users/**").permitAll()
+                        .requestMatchers("/api/rapports/**").permitAll()
+                        .requestMatchers("/api/contrats/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -1,6 +1,7 @@
 package com.example.pfe_backend.service;
 
 import com.example.pfe_backend.model.Contrat;
+import com.example.pfe_backend.model.User;
 import com.example.pfe_backend.repository.ContratRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,10 @@ public class ContratService {
 
     public List<Contrat> findByStatus(Contrat.StatusContrat status) {
         return contratRepository.findByStatus(status);
+    }
+
+    public long countContrats() {
+        return contratRepository.count();
     }
 
 

@@ -38,7 +38,7 @@ public class PartnerService {
 
 
     public void deletePartner(Long id) {
-        userRepository.deleteByIdAndRole(id, User.Role.PARTNER);
+        userRepository.delete(getPartnerById(id));;
     }
     
 

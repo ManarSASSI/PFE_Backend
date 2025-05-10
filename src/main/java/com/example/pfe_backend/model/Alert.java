@@ -96,6 +96,7 @@ public class Alert {
 
     public enum AlertType {
         CONTRAT_EXPIRATION,
+        CONTRAT_RETARD,
         PAYMENT_DUE,
         DOCUMENT_MISSING
     }

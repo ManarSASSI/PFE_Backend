@@ -53,6 +53,12 @@ public class ContratController {
 //        return ResponseEntity.status(HttpStatus.CREATED).body(savedContrat);
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Long> countContrats() {
+        return ResponseEntity.ok(contratService.countContrats());
+    }
+
+
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<Contrat> updateContrat(@PathVariable Long id,
