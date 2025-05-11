@@ -34,8 +34,10 @@ public class AuthController {
             // Structurez les données utilisateur
             Map<String, Object> userData = new HashMap<>();
             userData.put("id", authResponse.getUser().getId());
+            userData.put("username", authResponse.getUser().getUsername());
             userData.put("email", authResponse.getUser().getEmail());
             userData.put("role", authResponse.getUser().getRole().name());
+            userData.put("avatar", authResponse.getUser().getAvatar());
             // Ajoutez d'autres champs si nécessaire
 
             response.put("user", userData);

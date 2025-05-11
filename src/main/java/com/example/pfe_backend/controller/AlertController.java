@@ -16,7 +16,6 @@ public class AlertController {
     @Autowired
     private AlertService alertService;
 
-    @PreAuthorize("hasAnyRole('PARTNER') and #userId == principal.id")
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Alert>> getUserAlerts(@PathVariable Long userId) {
         List<Alert> alerts = alertService.getAlertsForUser(userId);
