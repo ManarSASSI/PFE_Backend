@@ -58,16 +58,16 @@ public class AuthController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-
-
-//        return ResponseEntity.ok(authService.register(registerRequest));
     }
 
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
-        authService.sendPasswordResetEmail(forgotPasswordRequest.getEmail());
-        return ResponseEntity.ok("Un email de réinitialisation a été envoyé si l'adresse existe.");
+        try {
+            authService.sendPasswordResetEmail(forgotPasswordRequest.getEmail());
+            return ResponseEntity.ok("Un email de réinitialisation a été envoyé si l'adresse existe.");
+        }catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email non trouvé.");
+        }
     }
 
     @PostMapping("/reset-password")

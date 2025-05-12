@@ -64,13 +64,13 @@ public class AuthService {
 
     public void sendPasswordResetEmail(String email) {
         User user = userRepository.findByEmail(email)
-                .orElse(null);
+                .orElseThrow(() -> new RuntimeException("Email not found"));
 
         if (user != null) {
             String token = UUID.randomUUID().toString();
             user.setResetPasswordToken(token);
             userRepository.save(user);
-            String resetLink = "http://votre-app.com/reset-password?token=" + token;
+            String resetLink = "http://localhost:4200/auth/resetPassword/" + token;
             emailService.sendEmail(
                     user.getEmail(),
                     "Réinitialisation de votre mot de passe",
@@ -78,8 +78,6 @@ public class AuthService {
             );
         }
     }
-
-
 
     public void resetPassword(String token, String newPassword) {
         User user = userRepository.findByResetPasswordToken(token)

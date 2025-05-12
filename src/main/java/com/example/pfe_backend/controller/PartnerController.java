@@ -30,16 +30,16 @@ public class PartnerController {
     private final UserRepository userRepository;
 
 
-    @GetMapping
-    public ResponseEntity<List<PartnerDto>> getAllPartners() {
-        List<User> partners = userRepository.findByRole(User.Role.PARTNER);
-
-        List<PartnerDto> partnerDtos = partners.stream()
-                .map(this::convertToPartnerDto)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(partnerDtos);
-    }
+//    @GetMapping
+//    public ResponseEntity<List<PartnerDto>> getAllPartners() {
+//        List<User> partners = userRepository.findByRole(User.Role.PARTNER);
+//
+//        List<PartnerDto> partnerDtos = partners.stream()
+//                .map(this::convertToPartnerDto)
+//                .collect(Collectors.toList());
+//
+//        return ResponseEntity.ok(partnerDtos);
+//    }
 
     private PartnerDto convertToPartnerDto(User user) {
         return new PartnerDto(
@@ -48,6 +48,23 @@ public class PartnerController {
         user.getPhone(),
         user.getEmail(),
         user.getLocation());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PartnerDto>> getAllPartners(@RequestParam(required = false) String name) {
+
+        List<User> partners;
+        if (name != null && !name.isEmpty()) {
+            partners = userRepository.findByRoleAndUsernameContainingIgnoreCase(User.Role.PARTNER, name);
+        } else {
+            partners = userRepository.findByRole(User.Role.PARTNER);
+        }
+
+        List<PartnerDto> partnerDtos = partners.stream()
+                .map(this::convertToPartnerDto)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(partnerDtos);
     }
 
 

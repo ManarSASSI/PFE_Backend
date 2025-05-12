@@ -29,4 +29,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Supprimer un partenaire
     void deleteByIdAndRole(Long id, User.Role role);
 
+    List<User> findByRoleAndUsernameContainingIgnoreCase(User.Role role, String username);
+
 }
