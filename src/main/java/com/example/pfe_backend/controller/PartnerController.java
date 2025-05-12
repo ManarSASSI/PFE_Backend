@@ -29,18 +29,6 @@ public class PartnerController {
 
     private final UserRepository userRepository;
 
-
-//    @GetMapping
-//    public ResponseEntity<List<PartnerDto>> getAllPartners() {
-//        List<User> partners = userRepository.findByRole(User.Role.PARTNER);
-//
-//        List<PartnerDto> partnerDtos = partners.stream()
-//                .map(this::convertToPartnerDto)
-//                .collect(Collectors.toList());
-//
-//        return ResponseEntity.ok(partnerDtos);
-//    }
-
     private PartnerDto convertToPartnerDto(User user) {
         return new PartnerDto(
         user.getId(),
@@ -48,6 +36,12 @@ public class PartnerController {
         user.getPhone(),
         user.getEmail(),
         user.getLocation());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PartnerDto> getPartnerById(@PathVariable Long id) {
+        User partner = partnerService.getPartnerById(id);
+        return ResponseEntity.ok(convertToPartnerDto(partner));
     }
 
     @GetMapping
@@ -67,6 +61,17 @@ public class PartnerController {
         return ResponseEntity.ok(partnerDtos);
     }
 
+    @PutMapping(value ="/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<User> updatePartner(@PathVariable Long id, @RequestParam("username") String username,
+                                              @RequestParam("email") String email,
+                                              @RequestParam(value = "password", required = false) String password,
+                                              @RequestParam(value = "phone", required = false) String phone,
+                                              @RequestParam(value = "location", required = false) String location,
+                                              @RequestParam(value = "avatar", required = false) MultipartFile avatar) {
+        User updatedPartner = partnerService.updatePartner(id, username, email, password, phone, location, avatar
+        );
+        return ResponseEntity.ok(updatedPartner);
+    }
 
 
     @GetMapping("/count")

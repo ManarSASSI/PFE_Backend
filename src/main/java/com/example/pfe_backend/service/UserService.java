@@ -44,7 +44,10 @@ public class UserService {
         user.setUsername(userDetails.getUsername());
         user.setEmail(userDetails.getEmail());
         user.setRole(userDetails.getRole());
-        // ... autres champs
+        user.setPassword(userDetails.getPassword());
+        user.setAvatar(userDetails.getAvatar());
+        user.setPhone(userDetails.getPhone());
+        user.setLocation(userDetails.getLocation());
         return userRepository.save(user);
     }
 
