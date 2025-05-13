@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/contrats")
@@ -21,6 +22,9 @@ public class ContratController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ContratRepository contratRepository;
 
     @GetMapping
     public List<Contrat> getAllContrats() {
@@ -107,4 +111,17 @@ public class ContratController {
     public List<Contrat> getContratsByDepartement(@PathVariable Contrat.Departement departement) {
         return contratService.findByDepartement(departement);
     }
+
+    @PatchMapping("/{id}/etat-execution")
+    public ResponseEntity<Contrat> updateEtatExecution(
+            @PathVariable Long id,
+            @RequestBody Map<String, Contrat.EtatExecution> update) {
+
+        Contrat contrat = contratRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Contrat non trouvé"));
+
+        contrat.setEtatExecution(update.get("etatExecution"));
+        return ResponseEntity.ok(contratRepository.save(contrat));
+    }
+
 }

@@ -51,6 +51,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/rapports/**").permitAll()
                         .requestMatchers("/api/contrats/**").permitAll()
                         .requestMatchers("/api/alerts/**").permitAll()
+                        .requestMatchers("/api/suivi-contrats/**").permitAll()
                         .anyRequest().authenticated()
               )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
