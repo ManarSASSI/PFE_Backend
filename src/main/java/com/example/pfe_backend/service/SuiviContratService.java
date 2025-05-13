@@ -29,16 +29,18 @@ public class SuiviContratService {
         this.contratRepository = contratRepository;
     }
 
-    public void ajouterSuivi(Long contratId, SuiviContrat suivi) {
+    public SuiviContrat ajouterSuivi(Long contratId, SuiviContrat suivi) {
         Contrat contrat = contratRepository.findById(contratId)
                 .orElseThrow(() -> new RuntimeException("Contrat non trouvé"));
 
         suivi.setContrat(contrat);
         suivi.setDateSuivi(LocalDate.now());
-        suiviRepository.save(suivi);
+        SuiviContrat savedSuivi = suiviRepository.save(suivi);
 
-        // Mettre à jour le statut si nécessaire
-        updateStatutContrat(contrat);
+        contrat.setEtatExecution(savedSuivi.getEtatExecution()); // Mise à jour directe
+        contratRepository.save(contrat);
+
+        return savedSuivi;
     }
 
     public List<SuiviContrat> getHistorique(Long contratId) {
@@ -52,4 +54,5 @@ public class SuiviContratService {
     public List<SuiviContrat> getAllSuiviContrats() {
         return suiviRepository.findAll();
     }
+
 }

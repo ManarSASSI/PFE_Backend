@@ -15,6 +15,8 @@ public class SuiviContrat {
     private String action;
     private String commentaire;
 
+    private Contrat.EtatExecution etatExecution;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contrat_id")
     @JsonIgnore
@@ -29,6 +31,23 @@ public class SuiviContrat {
         this.action = action;
         this.commentaire = commentaire;
         this.contrat = contrat;
+    }
+
+    public SuiviContrat(Long id, LocalDate dateSuivi, String action, String commentaire, Contrat.EtatExecution etatExecution, Contrat contrat) {
+        this.id = id;
+        this.dateSuivi = dateSuivi;
+        this.action = action;
+        this.commentaire = commentaire;
+        this.etatExecution = etatExecution;
+        this.contrat = contrat;
+    }
+
+    public Contrat.EtatExecution getEtatExecution() {
+        return etatExecution;
+    }
+
+    public void setEtatExecution(Contrat.EtatExecution etatExecution) {
+        this.etatExecution = etatExecution;
     }
 
     public Long getId() {
