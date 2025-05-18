@@ -20,8 +20,10 @@ public class RapportService {
     private ContratRepository contratRepository;
 
     public byte[] genererRapportContrat(Long contratId) throws DocumentException {
+
+        try{
         Contrat contrat = contratRepository.findById(contratId)
-                .orElseThrow(() -> new RuntimeException("Contrat non trouvé"));
+                .orElseThrow(() -> new RuntimeException("Contrat ID " + contratId + " non trouvé"));
 
         Document document = new Document(PageSize.A4);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -62,5 +64,8 @@ public class RapportService {
         document.close();
 
         return baos.toByteArray();
-    }
+    }catch (Exception e) {
+            throw new DocumentException();
+        }
+        }
 }

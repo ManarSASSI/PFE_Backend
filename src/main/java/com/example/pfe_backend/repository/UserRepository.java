@@ -2,6 +2,8 @@ package com.example.pfe_backend.repository;
 
 import com.example.pfe_backend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -30,5 +32,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void deleteByIdAndRole(Long id, User.Role role);
 
     List<User> findByRoleAndUsernameContainingIgnoreCase(User.Role role, String username);
+
+
+    @Query("SELECT u FROM User u WHERE u.createdBy.id = :managerId")
+    List<User> findByCreatedById(Long managerId);
+
+    long countByCreatedById(Long managerId);
+
+    @Query("SELECT u FROM User u WHERE u.createdBy.id = :managerId AND LOWER(u.username) LIKE LOWER(CONCAT('%', :name, '%'))")
+    List<User> findByCreatedByAndUsernameContaining(@Param("managerId") Long managerId, @Param("name") String name);
 
 }

@@ -27,5 +27,7 @@ public interface ContratRepository extends JpaRepository<Contrat, Long> {
 
     List<Contrat> findByDateFin(LocalDate dateFin);
 
-//
+    List<Contrat> findByEtatExecutionAndDateFinBefore(Contrat.EtatExecution etatExecution, LocalDate date);
+    long countByCreatedById(Long managerId);
+    List<Contrat> findByCreatedById(Long createdById);
 }

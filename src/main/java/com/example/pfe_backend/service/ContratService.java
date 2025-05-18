@@ -5,6 +5,7 @@ import com.example.pfe_backend.model.Contrat;
 import com.example.pfe_backend.model.User;
 import com.example.pfe_backend.repository.AlertRepository;
 import com.example.pfe_backend.repository.ContratRepository;
+import com.example.pfe_backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,9 @@ public class ContratService {
 
     @Autowired
     private AlertRepository alertRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public ContratService(ContratRepository contratRepository, AlertRepository alertRepository) {
         this.contratRepository = contratRepository;
@@ -32,6 +36,23 @@ public class ContratService {
     }
 
     public Contrat save(Contrat contrat) {
+        // Fetch the manager
+        User manager = userRepository.findById(contrat.getCreatedById())
+                .orElseThrow(() -> new IllegalStateException("Manager introuvable"));
+
+        // Fetch the partner using the partnerId from the Contrat entity
+        User partner = userRepository.findById(contrat.getPartner().getId())
+                .orElseThrow(() -> new IllegalStateException("Partenaire introuvable"));
+
+        // Check and set the partner's createdBy if necessary
+        if (partner.getCreatedBy() == null) {
+            partner.setCreatedBy(manager);
+            userRepository.save(partner);
+        }
+
+        // Ensure the contrat references the updated partner
+        contrat.setPartner(partner);
+
         return contratRepository.save(contrat);
     }
 
@@ -53,6 +74,10 @@ public class ContratService {
 
     public long countContrats() {
         return contratRepository.count();
+    }
+
+    public long countContratsByManager(Long managerId) {
+        return contratRepository.countByCreatedById(managerId);
     }
 
 

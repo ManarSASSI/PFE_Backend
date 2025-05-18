@@ -118,6 +118,17 @@ public class PartnerController {
         return new ResponseEntity<>(createdPartner, HttpStatus.CREATED);
     }
 
+    @GetMapping("/manager/{managerId}")
+    public ResponseEntity<List<User>> getPartnersByManager(@PathVariable Long managerId, @RequestParam(required = false) String name) {
+        List<User> partners;
+        if (name != null && !name.isEmpty()) {
+            partners = userRepository.findByCreatedByAndUsernameContaining(managerId, name);
+        } else {
+            partners = userRepository.findByCreatedById(managerId);
+        }
+        return ResponseEntity.ok(partners);
+    }
+
     private String storeFile(MultipartFile file) throws IOException {
         String uploadDir = "uploads/partners/";
         File directory = new File(uploadDir);
@@ -130,5 +141,10 @@ public class PartnerController {
         file.transferTo(new File(filePath));
 
         return fileName;
+    }
+
+    @GetMapping("/count/manager/{managerId}")
+    public ResponseEntity<Long> countPartnersByManager(@PathVariable Long managerId) {
+        return ResponseEntity.ok(userRepository.countByCreatedById(managerId));
     }
 }

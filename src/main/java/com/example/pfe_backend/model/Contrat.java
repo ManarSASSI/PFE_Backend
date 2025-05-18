@@ -1,7 +1,6 @@
 package com.example.pfe_backend.model;
 
-import com.example.pfe_backend.model.*;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,6 +10,7 @@ import java.util.*;
 @Entity
 @Table(name = "contrats")
 @Data
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Contrat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,13 +24,28 @@ public class Contrat {
 
     private Double montant;
 
-    @ManyToOne
-    @JoinColumn(name = "partner_id", updatable = false)
+    @Column(name = "partner_id")
+    private Long partnerId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "partner_id",
+            referencedColumnName = "id",
+            insertable = false,
+            updatable = false
+    )
     private User partner;
 
-    @Transient
-    @JsonProperty("partnerId")
-    private Long partnerId;
+//    @ManyToOne
+//    @JoinColumn(name = "partner_id", updatable = false)
+//    private User partner;
+//
+//    @Transient
+//    @JsonProperty("partnerId")
+//    private Long partnerId;
+
+    @Column(name = "created_by", nullable = false)
+    private Long createdById;
 
 
     @Column(nullable = false, name = "date_debut")
@@ -70,13 +85,14 @@ public class Contrat {
     public Contrat() {
     }
 
-    public Contrat(Long id, TypeContrat typeContrat, String objetContrat, Double montant, User partner,Long partnerId, LocalDate dateDebut, LocalDate dateFin, StatusContrat status, String commentaire, Departement departement, LocalTime heureDebutSemaine, LocalTime heureFinSemaine, EtatExecution etatExecution, List<SuiviContrat> suivis, List<Document> documents) {
+    public Contrat(Long id, TypeContrat typeContrat, String objetContrat, Double montant, User partner, Long partnerId, Long createdBy, LocalDate dateDebut, LocalDate dateFin, StatusContrat status, String commentaire, Departement departement, LocalTime heureDebutSemaine, LocalTime heureFinSemaine, EtatExecution etatExecution, List<SuiviContrat> suivis, List<Document> documents, Double penaliteParJour, Integer joursRetard, Double montantPenalite, Boolean alerteExpirationEnvoyee) {
         this.id = id;
         this.typeContrat = typeContrat;
         this.objetContrat = objetContrat;
         this.montant = montant;
         this.partner = partner;
         this.partnerId = partnerId;
+        this.createdById = createdBy;
         this.dateDebut = dateDebut;
         this.dateFin = dateFin;
         this.status = status;
@@ -87,7 +103,12 @@ public class Contrat {
         this.etatExecution = etatExecution;
         this.suivis = suivis;
         this.documents = documents;
+        this.penaliteParJour = penaliteParJour;
+        this.joursRetard = joursRetard;
+        this.montantPenalite = montantPenalite;
+        this.alerteExpirationEnvoyee = alerteExpirationEnvoyee;
     }
+
 
     @JsonProperty("partnerUsername")
     public String getPartnerUsername() {
@@ -276,6 +297,14 @@ public class Contrat {
         this.alerteExpirationEnvoyee = alerteExpirationEnvoyee;
     }
 
+    public Long getCreatedById() {
+        return createdById;
+    }
+
+    public void setCreatedById(Long createdBy) {
+        this.createdById = createdBy;
+    }
+
     public enum TypeContrat {
         SERVICE,
         TRAVAUX,
@@ -299,5 +328,8 @@ public class Contrat {
         TERMINE,
         EN_RETARD
     }
+
+
+
 
 }
