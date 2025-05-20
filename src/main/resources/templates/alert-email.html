@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Alert</title>
+</head>
+<body>
+<p>Bonjour <span th:text="${receiver.username}"></span>,</p>
+<p>Vous avez reçu une nouvelle alerte de type <strong th:text="${type}"></strong> :</p>
+<div th:text="${message}"></div>
+<p>Date de l'alerte : <span th:text="${#dates.format(alertDate, 'dd/MM/yyyy HH:mm')}"></span></p>
+<p>
+    Connectez-vous à votre <a th:href="${applicationUrl}">espace partenaire</a>
+    pour plus de détails.
+</p>
+</body>
+</html>

@@ -23,6 +23,9 @@ public class AlertService {
     @Autowired
     private ContratRepository contratRepository;
 
+    @Autowired
+    private EmailService emailService;
+
 
     public void createAlert(Long contratId, Long partnerId, String message, Alert.AlertType type) {
         Contrat contrat = contratRepository.findById(contratId)
@@ -40,6 +43,9 @@ public class AlertService {
         alert.setType(type);
 
         alertRepository.save(alert);
+
+
+        emailService.sendAlertEmail(partner, message, type);
 
         log.info("Alerte créée pour le contrat ID {} et le partenaire {}", contratId, partnerId);
     }
@@ -59,6 +65,18 @@ public class AlertService {
         Alert alert = alertRepository.findById(alertId).orElseThrow();
         alert.setRead(true);
         alertRepository.save(alert);
+    }
+
+    public void deleteAlert(Long alertId) {
+        Alert alert = alertRepository.findById(alertId)
+                .orElseThrow(() -> new IllegalArgumentException("Alerte non trouvée avec l'ID : " + alertId));
+
+        alertRepository.delete(alert);
+        log.info("Alerte supprimée avec l'ID : {}", alertId);
+    }
+
+    public List<Alert> getAlertsForManager(Long managerId) {
+        return alertRepository.findAlertsByManager(managerId);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.pfe_backend.service;
 
+import com.example.pfe_backend.model.Alert;
 import com.example.pfe_backend.model.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -33,7 +34,7 @@ public class EmailService {
 
 
     @Async
-    public void sendEmailNotification(User receiver, User sender, String messageContent) {
+    public void sendAlertEmail(User receiver, String messageContent, Alert.AlertType type) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
@@ -41,14 +42,13 @@ public class EmailService {
             // Configuration du contexte Thymeleaf
             Context context = new Context();
             context.setVariable("receiver", receiver);
-            context.setVariable("sender", sender);
             context.setVariable("message", messageContent);
-            context.setVariable("applicationUrl", "http://votre-app.com");
+            context.setVariable("applicationUrl", "http://localhost:4200/auth/login");
 
-            String htmlContent = templateEngine.process("email-notification", context);
+            String htmlContent = templateEngine.process("alert-email", context);
 
             helper.setTo(receiver.getEmail());
-            helper.setSubject("Nouveau message de " + sender.getUsername());
+            helper.setSubject("Nouvelle alert : " + type.toString());
             helper.setText(htmlContent, true);
 
             mailSender.send(mimeMessage);

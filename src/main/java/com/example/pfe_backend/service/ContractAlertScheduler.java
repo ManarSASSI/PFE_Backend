@@ -22,12 +22,11 @@ public class ContractAlertScheduler {
     private ContratRepository contratRepository;
     @Autowired
     private AlertService alertService;
-//    @Autowired
-//    private UserRepository userRepository;
+
 
     @Transactional
-//    @Scheduled(cron = "0 */2 * * * *") // Toutes  minutes
-    @Scheduled(cron = "0 0 0 * * ?") // Exécution quotidienne à minuit
+    @Scheduled(cron = "0 */60 * * * *") // Toutes  minutes
+//    @Scheduled(cron = "0 0 0 * * ?") // Exécution quotidienne à minuit
     public void checkContractExpirations() {
         log.info("Vérification des contrats expirants...");
 
