@@ -58,4 +58,17 @@ public class UserController {
         List<User> users = userService.getUsersByRole(role);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
+
+
+    @GetMapping("/pending")
+//    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<User>> getPendingUsers() {
+        return ResponseEntity.ok(userService.getPendingUsers());
+    }
+
+    @PostMapping("/{id}/approve")
+//    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<User> approveUser(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.approveUser(id));
+    }
 }

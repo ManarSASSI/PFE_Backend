@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,11 +44,14 @@ public class AuthController {
             response.put("user", userData);
 
             return ResponseEntity.ok(response);
+
+        } catch (DisabledException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Compte en attente de validation par l'administrateur"));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("message", "Identifiants invalides"));
         }
-//        return ResponseEntity.ok(authService.authenticate(loginRequest));
     }
 
     @PostMapping("/register")

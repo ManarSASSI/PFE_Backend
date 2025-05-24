@@ -147,4 +147,10 @@ public class PartnerController {
     public ResponseEntity<Long> countPartnersByManager(@PathVariable Long managerId) {
         return ResponseEntity.ok(userRepository.countByCreatedById(managerId));
     }
+
+    @GetMapping("/monthly-count/{managerId}")
+    public ResponseEntity<List<Integer>> getMonthlyPartnersCount(@PathVariable Long managerId) {
+        List<Integer> counts = partnerService.getMonthlyPartnersCount(managerId);
+        return ResponseEntity.ok(counts);
+    }
 }

@@ -14,12 +14,15 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
-    // Injection des dépendances via le constructeur
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
+
 
     // Méthodes CRUD
     public User createUser(User user) {
@@ -57,5 +60,25 @@ public class UserService {
 
     public List<User> getUsersByRole(User.Role role) {
         return userRepository.findByRole(role);
+    }
+
+    public List<User> getPendingUsers() {
+        return userRepository.findByEnabled(false);
+    }
+
+    public User approveUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        user.setEnabled(true);
+        User savedUser = userRepository.save(user);
+
+        emailService.sendEmail(
+                user.getEmail(),
+                "Compte activé",
+                "Votre compte a été approuvé par l'administrateur. Vous pouvez maintenant vous connecter."
+        );
+
+        return savedUser;
     }
 }

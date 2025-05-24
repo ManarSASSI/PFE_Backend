@@ -138,6 +138,21 @@ public class ContratController {
         return contratRepository.findByCreatedById(managerId);
     }
 
+    @GetMapping("/monthly-count/{managerId}")
+    public ResponseEntity<List<Integer>> getMonthlyContratsCount(@PathVariable Long managerId) {
+        List<Integer> counts = contratService.getMonthlyContratsCount(managerId);
+        return ResponseEntity.ok(counts);
+    }
 
+
+    @GetMapping("/partner/{partnerId}")
+    public ResponseEntity<List<Contrat>> getContratsByPartner(@PathVariable Long partnerId) {
+        return ResponseEntity.ok(contratService.getContratsByPartner(partnerId));
+    }
+
+    @GetMapping("/monthly/partner/{partnerId}")
+    public ResponseEntity<List<Integer>> getMonthlyContratsForPartner(@PathVariable Long partnerId) {
+        return ResponseEntity.ok(contratService.getMonthlyContratsCountForPartner(partnerId));
+    }
 
 }

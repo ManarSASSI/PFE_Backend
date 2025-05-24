@@ -9,7 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -72,6 +74,19 @@ public class PartnerService {
             partner.setAvatar(fileName);
         }
         return userRepository.save(partner);
+    }
+
+    public List<Integer> getMonthlyPartnersCount(Long managerId) {
+        List<Object[]> results = userRepository.findMonthlyPartnerCounts(managerId);
+        int[] monthlyCounts = new int[12];
+
+        for (Object[] result : results) {
+            int month = (int) result[0];
+            Long count = (Long) result[1];
+            monthlyCounts[month - 1] = count.intValue();
+        }
+
+        return Arrays.stream(monthlyCounts).boxed().collect(Collectors.toList());
     }
 
 }

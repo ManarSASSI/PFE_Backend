@@ -30,4 +30,31 @@ public interface ContratRepository extends JpaRepository<Contrat, Long> {
     List<Contrat> findByEtatExecutionAndDateFinBefore(Contrat.EtatExecution etatExecution, LocalDate date);
     long countByCreatedById(Long managerId);
     List<Contrat> findByCreatedById(Long createdById);
+
+//    @Query("SELECT EXTRACT(MONTH FROM c.dateDebut), COUNT(c) " +
+//            "FROM Contrat c " +
+//            "WHERE c.createdById = :managerId " +
+//            "GROUP BY EXTRACT(MONTH FROM c.dateDebut)")
+@Query(value = """
+    SELECT EXTRACT(MONTH FROM c.date_debut)::integer, 
+           COUNT(c.id) 
+    FROM contrats c 
+    WHERE c.created_by = :managerId 
+    GROUP BY EXTRACT(MONTH FROM c.date_debut)
+    """, nativeQuery = true)
+    List<Object[]> findMonthlyContratCounts(@Param("managerId") Long managerId);
+
+
+
+    List<Contrat> findByPartnerId(Long partnerId);
+
+    @Query(value = """
+    SELECT EXTRACT(MONTH FROM c.date_debut)::integer, 
+           COUNT(c.id) 
+    FROM contrats c 
+    WHERE c.partnerId = :partnerId 
+    GROUP BY EXTRACT(MONTH FROM c.date_debut)
+    """, nativeQuery = true)
+    List<Object[]> findMonthlyContratCountsByPartner(@Param("partnerId") Long partnerId);
+
 }

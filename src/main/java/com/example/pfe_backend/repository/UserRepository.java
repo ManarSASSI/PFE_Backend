@@ -42,4 +42,20 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.createdBy.id = :managerId AND LOWER(u.username) LIKE LOWER(CONCAT('%', :name, '%'))")
     List<User> findByCreatedByAndUsernameContaining(@Param("managerId") Long managerId, @Param("name") String name);
 
+//    @Query("SELECT EXTRACT(MONTH FROM TO_TIMESTAMP(u.id / 1000)), COUNT(u) " +
+//            "FROM User u " +
+//            "WHERE u.role = 'PARTNER' AND u.createdBy.id = :managerId " +
+//            "GROUP BY EXTRACT(MONTH FROM TO_TIMESTAMP(u.id / 1000))")
+@Query(value = """
+    SELECT EXTRACT(MONTH FROM TO_TIMESTAMP(u.id::numeric / 1000))::integer, 
+           COUNT(u.id) 
+    FROM users u 
+    WHERE u.role = 'PARTNER' 
+      AND u.created_by = :managerId 
+    GROUP BY EXTRACT(MONTH FROM TO_TIMESTAMP(u.id::numeric / 1000))
+    """, nativeQuery = true)
+    List<Object[]> findMonthlyPartnerCounts(@Param("managerId") Long managerId);
+
+
+    List<User> findByEnabled(boolean enabled);
 }

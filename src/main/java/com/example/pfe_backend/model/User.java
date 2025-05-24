@@ -56,6 +56,17 @@ public class User  implements UserDetails {
     private User createdBy;
 
 
+    // Ajouter ce champ dans la classe User
+    @Column(nullable = false)
+    private boolean enabled = false;
+
+    // Modifier la méthode existante
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+
     @OneToMany(mappedBy = "partner")
     @JsonIgnore
     private List<Contrat> contrats = new ArrayList<>();
@@ -96,9 +107,6 @@ public class User  implements UserDetails {
         return true;
     }
 
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+
 
 }

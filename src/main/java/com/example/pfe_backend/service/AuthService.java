@@ -38,6 +38,7 @@ public class AuthService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(request.getRole());
+        user.setEnabled(false);
         return userRepository.save(user);
     }
 
@@ -87,69 +88,6 @@ public class AuthService {
         user.setResetPasswordToken(null);
         userRepository.save(user);
     }
-
-
-//    public JwtResponse login(LoginRequest loginRequest) {
-//        Authentication authentication = authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(
-//                        loginRequest.getEmail(),
-//                        loginRequest.getPassword()
-//                )
-//        );
-//
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        String jwt = jwtTokenProvider.generateToken(authentication);
-//
-//        User user = userRepository.findByEmail(loginRequest.getEmail())
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        return new JwtResponse(jwt, user.getId(), user.getEmail(), user.getRole());
-//    }
-//
-//    @Transactional
-//    public User register(RegisterRequest registerRequest) {
-//        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
-//            throw new RuntimeException("Passwords do not match");
-//        }
-//
-//        if (userRepository.existsByEmail(registerRequest.getEmail())) {
-//            throw new RuntimeException("Email is already taken");
-//        }
-//
-//        User user = new User();
-//        user.setName(registerRequest.getName());
-//        user.setEmail(registerRequest.getEmail());
-//        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-//        user.setRole(registerRequest.getRole());
-//
-//        return userRepository.save(user);
-//    }
-//
-//    public void forgotPassword(ForgotPasswordRequest forgotPasswordRequest) {
-//        User user = userRepository.findByEmail(forgotPasswordRequest.getEmail())
-//                .orElseThrow(() -> new RuntimeException("User not found with this email"));
-//
-//        String token = UUID.randomUUID().toString();
-//        user.setResetPasswordToken(token);
-//        userRepository.save(user);
-//
-//        // Envoyer l'email avec le token
-//        String resetLink = "http://your-frontend-url/reset-password?token=" + token;
-//        emailService.sendPasswordResetEmail(user.getEmail(), resetLink);
-//    }
-//
-//    public void resetPassword(ResetPasswordRequest resetPasswordRequest) {
-//        if (!resetPasswordRequest.getNewPassword().equals(resetPasswordRequest.getConfirmPassword())) {
-//            throw new RuntimeException("Passwords do not match");
-//        }
-//
-//        User user = userRepository.findByResetPasswordToken(resetPasswordRequest.getToken())
-//                .orElseThrow(() -> new RuntimeException("Invalid token"));
-//
-//        user.setPassword(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));
-//        user.setResetPasswordToken(null);
-//        userRepository.save(user);
-//    }
 
 
 }

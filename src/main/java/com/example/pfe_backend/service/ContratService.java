@@ -9,7 +9,10 @@ import com.example.pfe_backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class ContratService {
 
@@ -80,6 +83,37 @@ public class ContratService {
         return contratRepository.countByCreatedById(managerId);
     }
 
+    public List<Integer> getMonthlyContratsCount(Long managerId) {
+        List<Object[]> results = contratRepository.findMonthlyContratCounts(managerId);
+        int[] monthlyCounts = new int[12];
 
+        for (Object[] result : results) {
+            int month = (int) result[0];
+            Long count = (Long) result[1];
+            monthlyCounts[month - 1] = count.intValue();
+        }
+
+        return Arrays.stream(monthlyCounts).boxed().collect(Collectors.toList());
+    }
+
+
+
+
+    public List<Contrat> getContratsByPartner(Long partnerId) {
+        return contratRepository.findByPartnerId(partnerId);
+    }
+
+    public List<Integer> getMonthlyContratsCountForPartner(Long partnerId) {
+        List<Object[]> results = contratRepository.findMonthlyContratCountsByPartner(partnerId);
+        int[] monthlyCounts = new int[12];
+
+        for (Object[] result : results) {
+            int month = (int) result[0];
+            Long count = (Long) result[1];
+            monthlyCounts[month - 1] = count.intValue();
+        }
+
+        return Arrays.stream(monthlyCounts).boxed().collect(Collectors.toList());
+    }
 
 }
