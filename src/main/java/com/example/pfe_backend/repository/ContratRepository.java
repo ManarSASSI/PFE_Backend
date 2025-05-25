@@ -57,4 +57,11 @@ public interface ContratRepository extends JpaRepository<Contrat, Long> {
     """, nativeQuery = true)
     List<Object[]> findMonthlyContratCountsByPartner(@Param("partnerId") Long partnerId);
 
+    @Query(value = """
+    SELECT EXTRACT(MONTH FROM c.date_debut)::integer, 
+           COUNT(c.id) 
+    FROM contrats c 
+    GROUP BY EXTRACT(MONTH FROM c.date_debut)
+    """, nativeQuery = true)
+    List<Object[]> findMonthlyContratCountsGlobal();
 }

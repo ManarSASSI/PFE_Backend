@@ -44,11 +44,11 @@ public class ContratController {
         try {
             // Récupération du manager depuis l'ID dans la requête
             User manager = userRepository.findById(contratRequest.getCreatedById())
-                    .orElseThrow(() -> new RuntimeException("Manager non trouvé avec l'ID: " + contratRequest.getCreatedById()));
+                    .orElseThrow(() -> new RuntimeException("Manager not found with ID: " + contratRequest.getCreatedById()));
 
             // Récupération du partenaire
             User partner = userRepository.findById(contratRequest.getPartnerId())
-                    .orElseThrow(() -> new RuntimeException("Partenaire non trouvé"));
+                    .orElseThrow(() -> new RuntimeException("Partner not found"));
 
             // Association du manager
             contratRequest.setCreatedById(manager.getId());
@@ -90,7 +90,7 @@ public class ContratController {
         existingContrat.setMontant(contratDetails.getMontant());
         if (contratDetails.getPartner() != null) {
             User partner = userRepository.findById(contratDetails.getPartner().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Partenaire non trouvé"));
+                    .orElseThrow(() -> new IllegalArgumentException("Partner not found"));
             existingContrat.setPartner(partner);
         }
         existingContrat.setDateDebut(contratDetails.getDateDebut());
@@ -127,7 +127,7 @@ public class ContratController {
             @RequestBody Map<String, Contrat.EtatExecution> update) {
 
         Contrat contrat = contratRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Contrat non trouvé"));
+                .orElseThrow(() -> new RuntimeException("Contract not found"));
 
         contrat.setEtatExecution(update.get("etatExecution"));
         return ResponseEntity.ok(contratRepository.save(contrat));
@@ -153,6 +153,11 @@ public class ContratController {
     @GetMapping("/monthly/partner/{partnerId}")
     public ResponseEntity<List<Integer>> getMonthlyContratsForPartner(@PathVariable Long partnerId) {
         return ResponseEntity.ok(contratService.getMonthlyContratsCountForPartner(partnerId));
+    }
+
+    @GetMapping("/admin/monthly")
+    public ResponseEntity<List<Integer>> getGlobalMonthlyContrats() {
+        return ResponseEntity.ok(contratService.getGlobalMonthlyStats());
     }
 
 }

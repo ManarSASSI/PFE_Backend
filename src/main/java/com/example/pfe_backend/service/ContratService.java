@@ -116,4 +116,21 @@ public class ContratService {
         return Arrays.stream(monthlyCounts).boxed().collect(Collectors.toList());
     }
 
+
+    public List<Integer> getGlobalMonthlyStats() {
+        List<Object[]> results = contratRepository.findMonthlyContratCountsGlobal();
+        return normalizeMonthlyData(results);
+    }
+
+    private List<Integer> normalizeMonthlyData(List<Object[]> results) {
+        int[] monthlyCounts = new int[12];
+        for (Object[] result : results) {
+            int month = (int) result[0];
+            Long count = (Long) result[1];
+            if (month >= 1 && month <= 12) {
+                monthlyCounts[month - 1] = count.intValue();
+            }
+        }
+        return Arrays.stream(monthlyCounts).boxed().collect(Collectors.toList());
+    }
 }

@@ -47,10 +47,10 @@ public class AuthController {
 
         } catch (DisabledException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "Compte en attente de validation par l'administrateur"));
+                    .body(Map.of("message", "Account awaiting validation by the administrator"));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "Identifiants invalides"));
+                    .body(Map.of("message", "Invalid credentials"));
         }
     }
 
@@ -68,9 +68,9 @@ public class AuthController {
     public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
         try {
             authService.sendPasswordResetEmail(forgotPasswordRequest.getEmail());
-            return ResponseEntity.ok("Un email de réinitialisation a été envoyé si l'adresse existe.");
+            return ResponseEntity.ok("A reset email has been sent if the address exists.");
         }catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email non trouvé.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email not found.");
         }
     }
 
@@ -91,7 +91,7 @@ public class AuthController {
 
         // 2. Retourne une réponse réussie
         return ResponseEntity.ok().body(Map.of(
-                "message", "Déconnexion réussie"
+                "message", "Logout successful"
         ));
     }
 

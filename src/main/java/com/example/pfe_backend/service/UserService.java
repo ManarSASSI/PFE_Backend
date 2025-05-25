@@ -6,7 +6,9 @@ import com.example.pfe_backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +29,7 @@ public class UserService {
     // Méthodes CRUD
     public User createUser(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("Email déjà utilisé");
+            throw new RuntimeException("Email already used");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
@@ -35,11 +37,19 @@ public class UserService {
 
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+
+    public User updateAvatar(Long id, MultipartFile file) throws IOException {
+        User user = getUserById(id);
+        user.setAvatar(file.getContentType());
+        user.setAvatarData(file.getBytes());
+        return userRepository.save(user);
     }
 
     public User updateUser(Long id, User userDetails) {
@@ -48,7 +58,7 @@ public class UserService {
         user.setEmail(userDetails.getEmail());
         user.setRole(userDetails.getRole());
         user.setPassword(userDetails.getPassword());
-        user.setAvatar(userDetails.getAvatar());
+//        user.setAvatar(userDetails.getAvatar());
         user.setPhone(userDetails.getPhone());
         user.setLocation(userDetails.getLocation());
         return userRepository.save(user);
@@ -68,7 +78,7 @@ public class UserService {
 
     public User approveUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         user.setEnabled(true);
         User savedUser = userRepository.save(user);

@@ -26,12 +26,12 @@ public class AuthService {
 
     public User register(RegistrationRequest request) {
         if (!request.getPassword().equals(request.getConfirmPassword())) {
-            throw new RuntimeException("Les mots de passe ne correspondent pas");
+            throw new RuntimeException("Passwords do not match");
         }
 
         // Validation du rôle
         if (request.getRole() == null) {
-            throw new RuntimeException("Le rôle est obligatoire");
+            throw new RuntimeException("The role is mandatory");
         }
         User user = new User();
         user.setUsername(request.getUsername());
@@ -52,7 +52,7 @@ public class AuthService {
         );
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         String jwtToken = jwtService.generateToken(user);
 

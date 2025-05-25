@@ -42,8 +42,12 @@ public class User  implements UserDetails {
 
     private String location;
 
+    @Lob
+    @Column(name = "avatar_data")
+    private byte[] avatarData;
+
+
     @Transient // Ce champ ne sera pas persisté en base
-    private MultipartFile avatarFile;
     private String avatar;
 
     @Enumerated(EnumType.STRING)
