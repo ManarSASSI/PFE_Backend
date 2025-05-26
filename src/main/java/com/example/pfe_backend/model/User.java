@@ -46,6 +46,8 @@ public class User  implements UserDetails {
     @Column(name = "avatar_data")
     private byte[] avatarData;
 
+    @Column(name = "avatar_type")
+    private String avatarType;
 
     @Transient // Ce champ ne sera pas persisté en base
     private String avatar;
