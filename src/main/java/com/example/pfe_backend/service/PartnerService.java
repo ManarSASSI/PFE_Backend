@@ -57,7 +57,7 @@ public class PartnerService {
     }
 
     public User updatePartner(Long id, String username, String email, String password,
-                              String phone, String location, MultipartFile avatar) {
+                              String phone, String location) {
         User partner = getPartnerById(id);
         partner.setUsername(username);
         partner.setEmail(email);
@@ -69,10 +69,10 @@ public class PartnerService {
         partner.setPhone(phone);
         partner.setLocation(location);
 
-        if (avatar != null && !avatar.isEmpty()) {
-            String fileName = fileStorageService.storeFile(avatar);
-            partner.setAvatar(fileName);
-        }
+//        if (avatar != null && !avatar.isEmpty()) {
+//            String fileName = fileStorageService.storeFile(avatar);
+//            partner.setAvatar(fileName);
+//        }
         return userRepository.save(partner);
     }
 

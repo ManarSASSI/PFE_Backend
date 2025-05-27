@@ -18,6 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsername(String Usernamee);// Vérifier si un email existe déjà
     List<User> findByRole(User.Role role); // Trouver les users par rôle
     List<User> findByIdAndRole(Long id, User.Role role);
+    List<User> findByCreatedBy(User user);
 
     Optional<User> findByResetPasswordToken(String token);
 

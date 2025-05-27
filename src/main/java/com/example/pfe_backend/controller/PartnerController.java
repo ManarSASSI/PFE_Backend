@@ -66,10 +66,10 @@ public class PartnerController {
                                               @RequestParam("email") String email,
                                               @RequestParam(value = "password", required = false) String password,
                                               @RequestParam(value = "phone", required = false) String phone,
-                                              @RequestParam(value = "location", required = false) String location,
-                                              @RequestParam(value = "avatar", required = false) MultipartFile avatar) {
-        User updatedPartner = partnerService.updatePartner(id, username, email, password, phone, location, avatar
-        );
+                                              @RequestParam(value = "location", required = false) String location
+//                                              @RequestParam(value = "avatar", required = false) MultipartFile avatar
+    ) {
+        User updatedPartner = partnerService.updatePartner(id, username, email, password, phone, location);
         return ResponseEntity.ok(updatedPartner);
     }
 
@@ -93,8 +93,9 @@ public class PartnerController {
             @RequestParam("email") String email,
             @RequestParam("password") String password,
             @RequestParam(value = "phone", required = false) String phone,
-            @RequestParam(value = "location", required = false) String location,
-            @RequestParam(value = "avatar", required = false) MultipartFile avatar) {
+            @RequestParam(value = "location", required = false) String location
+//            @RequestParam(value = "avatar", required = false) MultipartFile avatar
+    ) {
 
         User partner = new User();
         partner.setUsername(username);
@@ -105,14 +106,14 @@ public class PartnerController {
         partner.setRole(User.Role.PARTNER);
 
         // Gestion de l'avatar si présent
-        if (avatar != null && !avatar.isEmpty()) {
-            try {
-                String fileName = storeFile(avatar); // À implémenter
-                partner.setAvatar(fileName);
-            } catch (IOException e) {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+//        if (avatar != null && !avatar.isEmpty()) {
+//            try {
+//                String fileName = storeFile(avatar); // À implémenter
+//                partner.setAvatar(fileName);
+//            } catch (IOException e) {
+//                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//            }
+//        }
 
         User createdPartner = partnerService.createPartner(partner);
         return new ResponseEntity<>(createdPartner, HttpStatus.CREATED);

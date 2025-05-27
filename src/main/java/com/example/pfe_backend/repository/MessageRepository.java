@@ -10,4 +10,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findBySenderAndReceiverOrderByTimestampDesc(User sender, User receiver);
     List<Message> findBySenderOrReceiverOrderByTimestampDesc(User user1, User user2);
     List<Message> findByReceiverOrderByTimestampDesc(User receiver);
+    void deleteBySender(User sender);  // Supprime par objet User
+    void deleteByReceiver(User receiver);
 }

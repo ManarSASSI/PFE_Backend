@@ -1,4 +1,5 @@
 package com.example.pfe_backend.controller;
+import com.example.pfe_backend.DTO.UpdateUserRequest;
 import com.example.pfe_backend.model.User;
 import com.example.pfe_backend.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -61,38 +62,52 @@ public class UserController {
 //    }
 
     // Mettre à jour un utilisateur
-    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(
             @PathVariable Long id,
-            @RequestPart(value = "avatar", required = false) MultipartFile avatarFile, // Changez à @RequestPart
-            @RequestParam("username") String username,
-            @RequestParam("email") String email,
-            @RequestParam("phone") String phone,
-            @RequestParam("location") String location,
-            @RequestParam(value = "password", required = false) String password) {
-
+//            @RequestPart(value = "avatar", required = false) MultipartFile avatarFile, // Changez à @RequestPart
+            @RequestBody UpdateUserRequest updateRequest)
+//            @RequestParam("username") String username,
+//            @RequestParam("email") String email,
+//            @RequestParam("phone") String phone,
+//            @RequestParam("location") String location,
+//            @RequestParam(value = "password", required = false) String password)
+    {
+        System.out.println("Received UpdateUserRequest: " + updateRequest);
         try {
             // Validation du fichier
-            if(avatarFile != null && avatarFile.isEmpty()) {
-                throw new IllegalArgumentException("Fichier vide");
-            }
+//            if(avatarFile != null && avatarFile.isEmpty()) {
+//                throw new IllegalArgumentException("Empty avatar file");
+//            }
 
-            User userDetails = new User();
-            userDetails.setUsername(username);
-            userDetails.setEmail(email);
-            userDetails.setPhone(phone);
-            userDetails.setLocation(location);
-
-            if(password != null) {
-                userDetails.setPassword(password);
-            }
-
-            User updatedUser = userService.updateUser(id, userDetails, avatarFile);
-            return ResponseEntity.ok().body(Map.of("message", "Mise à jour réussie"));
-
-        } catch (Exception e) {
+            User updatedUser = userService.updateUser(id, updateRequest);
+            return ResponseEntity.ok(updatedUser);
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to process avatar file: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Unexpected error: " + e.getMessage()));
         }
+
+//            UpdateUserRequest userDetails = new UpdateUserRequest();
+//            userDetails.setUsername(updateRequest.getUsername());
+//            userDetails.setEmail(updateRequest.getEmail());
+//            userDetails.setPhone(updateRequest.getPhone());
+//            userDetails.setLocation(updateRequest.getLocation());
+//
+//            if(updateRequest.getPassword() != null ) {
+//                userDetails.setPassword(updateRequest.getPassword());
+//            }
+//
+//            User updatedUser = userService.updateUser(id, userDetails, avatarFile);
+//            return ResponseEntity.ok(updatedUser);
+//
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+//        }
     }
 
     // Supprimer un utilisateur
@@ -127,31 +142,29 @@ public class UserController {
         return ResponseEntity.ok(userService.getPendingUsers().size());
     }
 
-    @GetMapping("/{id}/avatar")
-    public ResponseEntity<byte[]> getAvatar(@PathVariable Long id) {
-        try {
-            User user = userService.getUserById(id);
-
-            // Vérifier la présence des données
-            if(user.getAvatarData() == null || user.getAvatarData().length == 0) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-
-            MediaType mediaType = MediaType.parseMediaType(user.getAvatarType());
-
-            return ResponseEntity.ok()
-                    .cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS))
-                    .contentType(mediaType)
-                    .body(user.getAvatarData());
-
-        } catch (InvalidMimeTypeException e) {
-            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).build();
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-//        return ResponseEntity.ok()
-//                .contentType(MediaType.parseMediaType(user.getAvatar()))
-//                .body(user.getAvatarData());
-    }
+//    @GetMapping("/{id}/avatar")
+//    public ResponseEntity<byte[]> getAvatar(@PathVariable Long id) {
+//        try {
+//            User user = userService.getUserById(id);
+//
+//            // Vérifier la présence des données
+//            if(user.getAvatarData() == null || user.getAvatarData().length == 0) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+//            }
+//
+//            MediaType mediaType = MediaType.parseMediaType(user.getAvatarType());
+//
+//            return ResponseEntity.ok()
+//                    .cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS))
+//                    .contentType(mediaType)
+//                    .body(user.getAvatarData());
+//
+//        } catch (InvalidMimeTypeException e) {
+//            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).build();
+//        } catch (Exception e) {
+//            return ResponseEntity.internalServerError().build();
+//        }
+////
+//    }
 
 }

@@ -38,7 +38,7 @@ public class AuthController {
             userData.put("username", authResponse.getUser().getUsername());
             userData.put("email", authResponse.getUser().getEmail());
             userData.put("role", authResponse.getUser().getRole().name());
-            userData.put("avatar", authResponse.getUser().getAvatar());
+//            userData.put("avatar", authResponse.getUser().getAvatar());
             // Ajoutez d'autres champs si nécessaire
 
             response.put("user", userData);

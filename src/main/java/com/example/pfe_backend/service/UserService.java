@@ -1,7 +1,9 @@
 package com.example.pfe_backend.service;
 
+import com.example.pfe_backend.DTO.UpdateUserRequest;
 import com.example.pfe_backend.model.Notification;
 import com.example.pfe_backend.model.User;
+import com.example.pfe_backend.repository.MessageRepository;
 import com.example.pfe_backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,12 +20,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final MessageRepository messageRepository;
 
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, EmailService emailService, MessageRepository messageRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
+        this.messageRepository = messageRepository;
     }
 
 
@@ -61,34 +65,65 @@ public class UserService {
 //        return userRepository.save(user);
 //    }
 @Transactional
-public User updateUser(Long id, User userDetails, MultipartFile avatarFile) throws IOException {
+public User updateUser(Long id, UpdateUserRequest updateRequest) throws IOException {
     User user = userRepository.findById(id).orElseThrow();
 
-    System.out.println("Avatar file received: " + (avatarFile != null));
-
-    // Mise à jour de l'avatar
-    if(avatarFile != null && !avatarFile.isEmpty()) {
-        System.out.println("Processing avatar file...");
-        user.setAvatarType(avatarFile.getContentType());
-        user.setAvatarData(avatarFile.getBytes());
-    }
+//    System.out.println("Avatar file received: " + (avatarFile != null));
+//
+//    if (user.isEnabled()) {
+//        user.setEnabled(true); // Assurez-vous que l'utilisateur reste activé
+//    }
+//
+//    // Mise à jour de l'avatar
+//    if (avatarFile != null && !avatarFile.isEmpty()) {
+//        String contentType = avatarFile.getContentType();
+//        if (contentType == null || !contentType.startsWith("image/")) {
+//            throw new IllegalArgumentException("Invalid file type: must be an image");
+//        }
+//        try {
+//            user.setAvatarType(contentType);
+//            user.setAvatarData(avatarFile.getBytes());
+//        } catch (IOException e) {
+//            throw new RuntimeException("Failed to process avatar file", e);
+//        }
+//    }
+//
+////    if(avatarFile != null && !avatarFile.isEmpty()) {
+////        System.out.println("Processing avatar file...");
+////        user.setAvatarType(avatarFile.getContentType());
+////        user.setAvatarData(avatarFile.getBytes());
+////    }
 
     // Mise à jour des autres champs
-    user.setUsername(userDetails.getUsername());
-    user.setEmail(userDetails.getEmail());
-    user.setPhone(userDetails.getPhone());
-    user.setLocation(userDetails.getLocation());
+    user.setUsername(updateRequest.getUsername());
+    user.setEmail(updateRequest.getEmail());
+    user.setPhone(updateRequest.getPhone());
+    user.setLocation(updateRequest.getLocation());
 
-    if(userDetails.getPassword() != null) {
-        user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+    if(updateRequest.getPassword() != null
+            && !updateRequest.getPassword().trim().isEmpty()) {
+        user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
     }
 
     return userRepository.save(user);
 }
 
-
+    @Transactional
     public void deleteUser(Long id) {
-        userRepository.delete(getUserById(id));
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 1. Supprimer les messages liés
+        messageRepository.deleteBySender(user);
+        messageRepository.deleteByReceiver(user);
+
+        // 2. Mettre à jour les références 'created_by' dans d'autres utilisateurs
+        List<User> dependentUsers = userRepository.findByCreatedBy(user);
+        dependentUsers.forEach(u -> u.setCreatedBy(null));
+        userRepository.saveAll(dependentUsers);
+
+        userRepository.delete(user);
     }
 
     public List<User> getUsersByRole(User.Role role) {

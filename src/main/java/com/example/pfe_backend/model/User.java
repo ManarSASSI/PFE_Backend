@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,15 +44,15 @@ public class User  implements UserDetails {
 
     private String location;
 
-    @Lob
-    @Column(name = "avatar_data")
-    private byte[] avatarData;
-
-    @Column(name = "avatar_type")
-    private String avatarType;
-
-    @Transient // Ce champ ne sera pas persisté en base
-    private String avatar;
+//    @Lob
+//    @Column(name = "avatar_data")
+//    private byte[] avatarData;
+//
+//    @Column(name = "avatar_type")
+//    private String avatarType;
+//
+//    @Transient // Ce champ ne sera pas persisté en base
+//    private String avatar;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -59,6 +61,7 @@ public class User  implements UserDetails {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private User createdBy;
 
 
