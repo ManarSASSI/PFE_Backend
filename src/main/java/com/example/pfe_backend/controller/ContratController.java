@@ -150,14 +150,15 @@ public class ContratController {
         return ResponseEntity.ok(contratService.getContratsByPartner(partnerId));
     }
 
-    @GetMapping("/monthly/partner/{partnerId}")
-    public ResponseEntity<List<Integer>> getMonthlyContratsForPartner(@PathVariable Long partnerId) {
-        return ResponseEntity.ok(contratService.getMonthlyContratsCountForPartner(partnerId));
-    }
-
     @GetMapping("/admin/monthly")
     public ResponseEntity<List<Integer>> getGlobalMonthlyContrats() {
         return ResponseEntity.ok(contratService.getGlobalMonthlyStats());
+    }
+
+    @GetMapping("/monthly/partner/{partnerId}")
+    public ResponseEntity<List<Integer>> getMonthlyContratsForPartner(@PathVariable Long partnerId) {
+        List<Integer> counts = contratService.getMonthlyContratsCountForPartner(partnerId);
+        return ResponseEntity.ok(counts);
     }
 
 }

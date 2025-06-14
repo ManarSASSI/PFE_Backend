@@ -1,19 +1,14 @@
 package com.example.pfe_backend.service;
 
 import com.example.pfe_backend.DTO.UpdateUserRequest;
-import com.example.pfe_backend.model.Notification;
 import com.example.pfe_backend.model.User;
-import com.example.pfe_backend.repository.MessageRepository;
-import com.example.pfe_backend.repository.UserRepository;
+import com.example.pfe_backend.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -21,13 +16,17 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final MessageRepository messageRepository;
+    private final AlertRepository alertRepository;
+    private final ContratRepository contratRepository;
 
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, EmailService emailService, MessageRepository messageRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, EmailService emailService, MessageRepository messageRepository, AlertRepository alertRepository, ContratRepository contratRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.messageRepository = messageRepository;
+        this.alertRepository = alertRepository;
+        this.contratRepository = contratRepository;
     }
 
 
@@ -68,32 +67,6 @@ public class UserService {
 public User updateUser(Long id, UpdateUserRequest updateRequest) throws IOException {
     User user = userRepository.findById(id).orElseThrow();
 
-//    System.out.println("Avatar file received: " + (avatarFile != null));
-//
-//    if (user.isEnabled()) {
-//        user.setEnabled(true); // Assurez-vous que l'utilisateur reste activé
-//    }
-//
-//    // Mise à jour de l'avatar
-//    if (avatarFile != null && !avatarFile.isEmpty()) {
-//        String contentType = avatarFile.getContentType();
-//        if (contentType == null || !contentType.startsWith("image/")) {
-//            throw new IllegalArgumentException("Invalid file type: must be an image");
-//        }
-//        try {
-//            user.setAvatarType(contentType);
-//            user.setAvatarData(avatarFile.getBytes());
-//        } catch (IOException e) {
-//            throw new RuntimeException("Failed to process avatar file", e);
-//        }
-//    }
-//
-////    if(avatarFile != null && !avatarFile.isEmpty()) {
-////        System.out.println("Processing avatar file...");
-////        user.setAvatarType(avatarFile.getContentType());
-////        user.setAvatarData(avatarFile.getBytes());
-////    }
-
     // Mise à jour des autres champs
     user.setUsername(updateRequest.getUsername());
     user.setEmail(updateRequest.getEmail());
@@ -114,7 +87,10 @@ public User updateUser(Long id, UpdateUserRequest updateRequest) throws IOExcept
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // 1. Supprimer les messages liés
+        alertRepository.deleteByRecipient(user);
+
+        contratRepository.deleteByPartner(user);
+
         messageRepository.deleteBySender(user);
         messageRepository.deleteByReceiver(user);
 

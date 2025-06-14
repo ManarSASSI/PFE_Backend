@@ -3,6 +3,7 @@ package com.example.pfe_backend.controller;
 import com.example.pfe_backend.model.Message;
 import com.example.pfe_backend.service.MessageService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +34,13 @@ public class MessageController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Message>> getUserMessages(@PathVariable Long userId) {
         return ResponseEntity.ok(messageService.getUserMessages(userId));
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<Void> deleteMessage(@PathVariable Long id) {
+        messageService.deleteMessage(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

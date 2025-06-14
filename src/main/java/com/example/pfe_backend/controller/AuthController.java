@@ -38,26 +38,38 @@ public class AuthController {
             userData.put("username", authResponse.getUser().getUsername());
             userData.put("email", authResponse.getUser().getEmail());
             userData.put("role", authResponse.getUser().getRole().name());
-//            userData.put("avatar", authResponse.getUser().getAvatar());
+            userData.put("manager", authResponse.getUser().getCreatedBy());
+
             // Ajoutez d'autres champs si nécessaire
 
             response.put("user", userData);
 
             return ResponseEntity.ok(response);
 
-        } catch (DisabledException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "Account awaiting validation by the administrator"));
-        } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "Invalid credentials"));
+            } catch (DisabledException e) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("message", "Account awaiting validation by the administrator"));
+            } catch (AuthenticationException e) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("message", "Invalid credentials"));
+            }
         }
-    }
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegistrationRequest registerRequest) {
         try {
             User user = authService.register(registerRequest);
+            return ResponseEntity.ok(user);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
+    @PostMapping("/register-admin")
+    public ResponseEntity<?> registerUserByAdmin(@RequestBody RegistrationRequest registerRequest) {
+        try {
+            User user = authService.registerByAdmin(registerRequest);
             return ResponseEntity.ok(user);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

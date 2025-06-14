@@ -1,10 +1,13 @@
 package com.example.pfe_backend.service;
 
+import com.example.pfe_backend.model.Alert;
 import com.example.pfe_backend.model.Message;
 import com.example.pfe_backend.model.User;
 import com.example.pfe_backend.repository.MessageRepository;
 import com.example.pfe_backend.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -19,6 +22,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class MessageService {
 
+    private static final Logger log = LoggerFactory.getLogger(MessageService.class);
     private final MessageRepository messageRepository;
     private final JavaMailSender mailSender;
     private final UserRepository userRepository;
@@ -68,6 +72,14 @@ public class MessageService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         return messageRepository.findByReceiverOrderByTimestampDesc(user);
+    }
+
+    public void deleteMessage(Long alertId) {
+        Message message = messageRepository.findById(alertId)
+                .orElseThrow(() -> new IllegalArgumentException("Alerte non trouvée avec l'ID : " + alertId));
+
+        messageRepository.delete(message);
+        log.info("Alerte supprimée avec l'ID : {}", alertId);
     }
 
 }

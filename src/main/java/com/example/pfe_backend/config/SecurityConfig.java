@@ -74,11 +74,30 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200")); // Your Angular app URL
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-//        configuration.setAllowedHeaders(Arrays.asList("*"));
+        // Correction CRITIQUE : Ajoutez ces headers
+        configuration.setAllowedHeaders(Arrays.asList(
+                "Authorization",
+                "Content-Type",
+                "Content-Disposition",  // Important pour les PDF
+                "Range"                 // Nécessaire pour les requêtes par plages
+        ));
+
+        // Headers exposés au frontend
+        configuration.setExposedHeaders(Arrays.asList(
+                "Content-Disposition",
+                "Content-Type",
+                "Content-Length",
+                "Accept-Ranges"
+        ));
+
+        //        configuration.setAllowedHeaders(Arrays.asList("*"));
 
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
         configuration.setAllowCredentials(true);
+
+        configuration.setExposedHeaders(Arrays.asList("Content-Disposition"));
+
 
 
         configuration.setMaxAge(3600L);

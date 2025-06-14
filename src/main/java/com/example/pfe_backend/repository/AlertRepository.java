@@ -16,7 +16,10 @@ public interface AlertRepository extends JpaRepository<Alert, Long> {
     List<Alert> findByRecipientIdOrderByAlertDateDesc(Long userId);
     List<Alert> findByContratId(Long contratId);
 
+
     @Query("SELECT a FROM Alert a JOIN a.recipient r WHERE r.createdBy.id = :managerId")
     List<Alert> findAlertsByManager(@Param("managerId") Long managerId);
+
+    void deleteByRecipient(User recipient);
 
 }

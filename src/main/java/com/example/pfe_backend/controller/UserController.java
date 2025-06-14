@@ -48,37 +48,14 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-//    @PostMapping(value = "/{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    public ResponseEntity<User> updateAvatar(
-//            @PathVariable Long id,
-//            @RequestParam("file") MultipartFile file) throws IOException {
-//
-//        if(file.isEmpty() || file.getContentType() == null) {
-//            throw new IllegalArgumentException("Invalid file type");
-//        }
-//
-//        User updatedUser = userService.updateAvatar(id, file);
-//        return ResponseEntity.ok(updatedUser);
-//    }
-
     // Mettre à jour un utilisateur
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(
             @PathVariable Long id,
-//            @RequestPart(value = "avatar", required = false) MultipartFile avatarFile, // Changez à @RequestPart
             @RequestBody UpdateUserRequest updateRequest)
-//            @RequestParam("username") String username,
-//            @RequestParam("email") String email,
-//            @RequestParam("phone") String phone,
-//            @RequestParam("location") String location,
-//            @RequestParam(value = "password", required = false) String password)
     {
         System.out.println("Received UpdateUserRequest: " + updateRequest);
         try {
-            // Validation du fichier
-//            if(avatarFile != null && avatarFile.isEmpty()) {
-//                throw new IllegalArgumentException("Empty avatar file");
-//            }
 
             User updatedUser = userService.updateUser(id, updateRequest);
             return ResponseEntity.ok(updatedUser);
@@ -91,28 +68,13 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Unexpected error: " + e.getMessage()));
         }
-
-//            UpdateUserRequest userDetails = new UpdateUserRequest();
-//            userDetails.setUsername(updateRequest.getUsername());
-//            userDetails.setEmail(updateRequest.getEmail());
-//            userDetails.setPhone(updateRequest.getPhone());
-//            userDetails.setLocation(updateRequest.getLocation());
-//
-//            if(updateRequest.getPassword() != null ) {
-//                userDetails.setPassword(updateRequest.getPassword());
-//            }
-//
-//            User updatedUser = userService.updateUser(id, userDetails, avatarFile);
-//            return ResponseEntity.ok(updatedUser);
-//
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-//        }
     }
 
     // Supprimer un utilisateur
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+
+
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

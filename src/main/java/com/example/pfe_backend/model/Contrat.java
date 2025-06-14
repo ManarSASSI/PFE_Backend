@@ -36,14 +36,6 @@ public class Contrat {
     )
     private User partner;
 
-//    @ManyToOne
-//    @JoinColumn(name = "partner_id", updatable = false)
-//    private User partner;
-//
-//    @Transient
-//    @JsonProperty("partnerId")
-//    private Long partnerId;
-
     @Column(name = "created_by", nullable = false)
     private Long createdById;
 

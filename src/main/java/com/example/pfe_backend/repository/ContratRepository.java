@@ -1,6 +1,7 @@
 package com.example.pfe_backend.repository;
 
 import com.example.pfe_backend.model.Contrat;
+import com.example.pfe_backend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -31,10 +32,6 @@ public interface ContratRepository extends JpaRepository<Contrat, Long> {
     long countByCreatedById(Long managerId);
     List<Contrat> findByCreatedById(Long createdById);
 
-//    @Query("SELECT EXTRACT(MONTH FROM c.dateDebut), COUNT(c) " +
-//            "FROM Contrat c " +
-//            "WHERE c.createdById = :managerId " +
-//            "GROUP BY EXTRACT(MONTH FROM c.dateDebut)")
 @Query(value = """
     SELECT EXTRACT(MONTH FROM c.date_debut)::integer, 
            COUNT(c.id) 
@@ -44,18 +41,8 @@ public interface ContratRepository extends JpaRepository<Contrat, Long> {
     """, nativeQuery = true)
     List<Object[]> findMonthlyContratCounts(@Param("managerId") Long managerId);
 
-
-
     List<Contrat> findByPartnerId(Long partnerId);
 
-    @Query(value = """
-    SELECT EXTRACT(MONTH FROM c.date_debut)::integer, 
-           COUNT(c.id) 
-    FROM contrats c 
-    WHERE c.partnerId = :partnerId 
-    GROUP BY EXTRACT(MONTH FROM c.date_debut)
-    """, nativeQuery = true)
-    List<Object[]> findMonthlyContratCountsByPartner(@Param("partnerId") Long partnerId);
 
     @Query(value = """
     SELECT EXTRACT(MONTH FROM c.date_debut)::integer, 
@@ -64,4 +51,19 @@ public interface ContratRepository extends JpaRepository<Contrat, Long> {
     GROUP BY EXTRACT(MONTH FROM c.date_debut)
     """, nativeQuery = true)
     List<Object[]> findMonthlyContratCountsGlobal();
+
+    long countByPartnerId(Long partnerId);
+
+    void deleteByPartner(User partner);
+
+    @Query(value = """
+    SELECT EXTRACT(MONTH FROM c.date_debut)::integer AS month, 
+           COUNT(c.id) AS count 
+    FROM contrats c 
+    WHERE c.partner_id = :partnerId 
+      AND EXTRACT(YEAR FROM c.date_debut) = EXTRACT(YEAR FROM CURRENT_DATE)
+    GROUP BY EXTRACT(MONTH FROM c.date_debut)
+    """, nativeQuery = true)
+    List<Object[]> findMonthlyContratCountsByPartner(@Param("partnerId") Long partnerId);
+
 }

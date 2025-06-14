@@ -44,16 +44,6 @@ public class User  implements UserDetails {
 
     private String location;
 
-//    @Lob
-//    @Column(name = "avatar_data")
-//    private byte[] avatarData;
-//
-//    @Column(name = "avatar_type")
-//    private String avatarType;
-//
-//    @Transient // Ce champ ne sera pas persisté en base
-//    private String avatar;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
@@ -76,7 +66,7 @@ public class User  implements UserDetails {
     }
 
 
-    @OneToMany(mappedBy = "partner")
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Contrat> contrats = new ArrayList<>();
 

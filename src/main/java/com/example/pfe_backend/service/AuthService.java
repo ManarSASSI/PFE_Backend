@@ -42,6 +42,42 @@ public class AuthService {
         return userRepository.save(user);
     }
 
+    public User registerByAdmin(RegistrationRequest request) {
+        if (request.getRole() == null) {
+            throw new RuntimeException("The role is mandatory");
+        }
+
+        // Vérifier l'unicité de l'email
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(request.getRole());
+        user.setEnabled(true); // Activer directement le compte
+
+        User savedUser = userRepository.save(user);
+
+        // Envoyer les credentials par email
+        sendUserCredentials(savedUser, request.getPassword());
+
+        return savedUser;
+    }
+
+    private void sendUserCredentials(User user, String plainPassword) {
+        String subject = "Your Account Credentials";
+        String content = "Your account has been created by administrator.\n\n"
+                + "Login details:\n"
+                + "Email: " + user.getEmail() + "\n"
+                + "Password: " + plainPassword + "\n\n"
+                + "Please change your password after first login.";
+
+        emailService.sendEmail(user.getEmail(), subject, content);
+    }
+
 
     public AuthResponse authenticate(AuthRequest request) {
         authenticationManager.authenticate(

@@ -103,18 +103,6 @@ public class ContratService {
         return contratRepository.findByPartnerId(partnerId);
     }
 
-    public List<Integer> getMonthlyContratsCountForPartner(Long partnerId) {
-        List<Object[]> results = contratRepository.findMonthlyContratCountsByPartner(partnerId);
-        int[] monthlyCounts = new int[12];
-
-        for (Object[] result : results) {
-            int month = (int) result[0];
-            Long count = (Long) result[1];
-            monthlyCounts[month - 1] = count.intValue();
-        }
-
-        return Arrays.stream(monthlyCounts).boxed().collect(Collectors.toList());
-    }
 
 
     public List<Integer> getGlobalMonthlyStats() {
@@ -131,6 +119,40 @@ public class ContratService {
                 monthlyCounts[month - 1] = count.intValue();
             }
         }
+        return Arrays.stream(monthlyCounts).boxed().collect(Collectors.toList());
+    }
+
+    private List<Double> fillMonthlyData(List<Object[]> results) {
+        Double[] monthlyData = new Double[12];
+        Arrays.fill(monthlyData, 0.0);
+
+        for (Object[] result : results) {
+            int month = ((Number) result[0]).intValue() - 1;
+            if (month >= 0 && month < 12) {
+                monthlyData[month] = ((Number) result[1]).doubleValue();
+            }
+        }
+
+        return Arrays.asList(monthlyData);
+    }
+
+    public List<Integer> getMonthlyContratsCountForPartner(Long partnerId) {
+        List<Object[]> results = contratRepository.findMonthlyContratCountsByPartner(partnerId);
+
+        // Initialiser un tableau de 12 mois avec des zéros
+        int[] monthlyCounts = new int[12];
+
+        // Remplir avec les données de la requête
+        for (Object[] result : results) {
+            int monthIndex = ((Number) result[0]).intValue() - 1; // Mois 1-12 devient index 0-11
+            long count = ((Number) result[1]).longValue();
+
+            if (monthIndex >= 0 && monthIndex < 12) {
+                monthlyCounts[monthIndex] = (int) count;
+            }
+        }
+
+        // Convertir en liste
         return Arrays.stream(monthlyCounts).boxed().collect(Collectors.toList());
     }
 }
